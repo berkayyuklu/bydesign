@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — bydesign.ai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['DM Sans', 'sans-serif'], serif: ['DM Serif Display', 'serif'] },
+          colors: {
+            brand: { 50:'#f0f7ff',100:'#e0effe',200:'#bae0fd',300:'#7dc8fb',400:'#38aaf5',500:'#0e8fe3',600:'#0271c1',700:'#035a9c',800:'#074c80',900:'#0c406b' },
+            stone: { 50:'#fafaf9',100:'#f5f5f4',200:'#e7e5e4',300:'#d6d3d1',400:'#a8a29e',500:'#78716c',600:'#57534e',700:'#44403c',800:'#292524',900:'#1c1917' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-stone-100 font-sans text-stone-800 antialiased">
+
+  <!-- AUTH GUARD -->
+  <div id="admin-guard" class="fixed inset-0 z-50 flex items-center justify-center bg-stone-50">
+    <div class="text-center">
+      <div class="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-brand-400 border-t-transparent animate-spin mb-4"></div>
+      <p class="text-sm text-stone-500">Yetki doğrulanıyor...</p>
+    </div>
+  </div>
+
+  <div id="admin-app" class="hidden flex min-h-screen">
+    
+    <!-- SIDEBAR -->
+    <aside class="w-56 flex-shrink-0 bg-white border-r border-stone-200 flex flex-col">
+      <div class="px-5 py-5 border-b border-stone-200">
+        <a href="index.html" class="font-serif text-lg text-stone-900">by<span class="text-brand-600">design</span></a>
+        <p class="text-xs text-stone-500 mt-0.5">Admin Paneli</p>
+      </div>
+      <nav class="flex-1 px-3 py-4 space-y-1">
+        <button onclick="showSection('dashboard')" class="admin-nav-btn active w-full" data-section="dashboard">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Dashboard
+        </button>
+        <button onclick="showSection('users')" class="admin-nav-btn w-full" data-section="users">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          Kullanıcılar
+        </button>
+        <button onclick="showSection('plans')" class="admin-nav-btn w-full" data-section="plans">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+          Planlar & Fiyatlar
+        </button>
+        <button onclick="showSection('payments')" class="admin-nav-btn w-full" data-section="payments">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          Ödemeler
+        </button>
+        <button onclick="showSection('settings')" class="admin-nav-btn w-full" data-section="settings">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Ayarlar
+        </button>
+      </nav>
+      <div class="px-3 py-4 border-t border-stone-200">
+        <a href="index.html" class="admin-nav-btn w-full block">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Siteye Dön
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 overflow-auto">
+      
+      <!-- TOPBAR -->
+      <div class="bg-white border-b border-stone-200 px-8 py-4 flex items-center justify-between">
+        <h1 id="section-title" class="text-lg font-semibold text-stone-900">Dashboard</h1>
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-stone-500">bydesign@admin.com</span>
+          <div class="h-8 w-8 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-semibold">A</div>
+        </div>
+      </div>
+
+      <!-- SECTIONS -->
+      <div class="p-8">
+
+        <!-- DASHBOARD -->
+        <section id="section-dashboard">
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-4 mb-8">
+            <div class="stat-card">
+              <p class="stat-label">Toplam Kullanıcı</p>
+              <p id="stat-users" class="stat-value">—</p>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">Aktif Planlar</p>
+              <p id="stat-plans" class="stat-value">—</p>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">Bu Ay Gelir</p>
+              <p id="stat-revenue" class="stat-value">—</p>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">AI Kullanımı</p>
+              <p id="stat-usage" class="stat-value">—</p>
+            </div>
+          </div>
+          <div class="rounded-xl border border-stone-200 bg-white p-6">
+            <h3 class="text-sm font-semibold text-stone-700 mb-4">Son Kayıtlar</h3>
+            <div id="recent-users-list" class="space-y-3 text-sm text-stone-500">Yükleniyor...</div>
+          </div>
+        </section>
+
+        <!-- USERS -->
+        <section id="section-users" class="hidden">
+          <div class="mb-4 flex items-center justify-between">
+            <input type="text" id="user-search" placeholder="Kullanıcı ara..." class="input-field w-64 text-sm" oninput="filterUsers(this.value)" />
+            <span id="user-count" class="text-xs text-stone-500"></span>
+          </div>
+          <div class="rounded-xl border border-stone-200 bg-white overflow-hidden">
+            <table class="w-full text-sm">
+              <thead class="bg-stone-50 text-xs text-stone-500 uppercase tracking-wider">
+                <tr>
+                  <th class="px-5 py-3 text-left">Kullanıcı</th>
+                  <th class="px-5 py-3 text-left">Plan</th>
+                  <th class="px-5 py-3 text-left">Kullanım</th>
+                  <th class="px-5 py-3 text-left">Kayıt</th>
+                  <th class="px-5 py-3 text-left">İşlem</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body" class="divide-y divide-stone-100">
+                <tr><td colspan="5" class="px-5 py-6 text-center text-stone-400">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- PLANS -->
+        <section id="section-plans" class="hidden">
+          <div class="mb-6 flex items-center justify-between">
+            <h2 class="text-sm font-medium text-stone-600">Mevcut Planlar</h2>
+            <button onclick="openPlanModal()" class="btn-primary text-sm">+ Yeni Plan Ekle</button>
+          </div>
+          <div id="plans-admin-grid" class="grid gap-4 md:grid-cols-3"></div>
+
+          <!-- Plan Modal -->
+          <div id="plan-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
+            <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl max-h-screen overflow-y-auto">
+              <div class="flex items-center justify-between mb-6">
+                <h3 id="plan-modal-title" class="text-lg font-semibold text-stone-900">Yeni Plan</h3>
+                <button onclick="closePlanModal()" class="text-stone-400 hover:text-stone-600">
+                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <div class="space-y-4">
+                <input type="hidden" id="plan-edit-id" />
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">Plan Adı</label>
+                  <input id="plan-name" type="text" class="input-field w-full" placeholder="Örn: Pro Plan" />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">Aylık Fiyat (₺)</label>
+                  <input id="plan-price" type="number" class="input-field w-full" placeholder="0" />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">Aylık AI Kullanım Limiti</label>
+                  <input id="plan-limit" type="number" class="input-field w-full" placeholder="10" />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">Özellikler (her satır bir özellik)</label>
+                  <textarea id="plan-features" rows="4" class="input-field w-full resize-none" placeholder="10 AI kullanımı/ay&#10;Tüm araçlara erişim&#10;E-posta desteği"></textarea>
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">Vurgu Rengi</label>
+                  <select id="plan-color" class="input-field w-full">
+                    <option value="stone">Gri (Ücretsiz)</option>
+                    <option value="brand">Mavi (Standart)</option>
+                    <option value="amber">Altın (Pro)</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input type="checkbox" id="plan-featured" class="h-4 w-4 rounded border-stone-300 text-brand-600" />
+                  <label for="plan-featured" class="text-sm text-stone-700">Önerilen plan olarak işaretle</label>
+                </div>
+                <button onclick="savePlan()" class="btn-primary w-full">Kaydet</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAYMENTS -->
+        <section id="section-payments" class="hidden">
+          <div class="rounded-xl border border-stone-200 bg-white overflow-hidden">
+            <table class="w-full text-sm">
+              <thead class="bg-stone-50 text-xs text-stone-500 uppercase tracking-wider">
+                <tr>
+                  <th class="px-5 py-3 text-left">Kullanıcı</th>
+                  <th class="px-5 py-3 text-left">Plan</th>
+                  <th class="px-5 py-3 text-left">Tutar</th>
+                  <th class="px-5 py-3 text-left">Tarih</th>
+                  <th class="px-5 py-3 text-left">Durum</th>
+                </tr>
+              </thead>
+              <tbody id="payments-table-body" class="divide-y divide-stone-100">
+                <tr><td colspan="5" class="px-5 py-6 text-center text-stone-400">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section id="section-settings" class="hidden">
+          <div class="max-w-xl space-y-6">
+            <div class="rounded-xl border border-stone-200 bg-white p-6">
+              <h3 class="text-sm font-semibold text-stone-700 mb-4">Gemini API</h3>
+              <div class="space-y-3">
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">API Anahtarı</label>
+                  <input id="settings-gemini-key" type="password" class="input-field w-full" placeholder="AIza..." />
+                </div>
+                <button onclick="saveSettings('gemini')" class="btn-primary text-sm">Kaydet</button>
+              </div>
+            </div>
+            <div class="rounded-xl border border-stone-200 bg-white p-6">
+              <h3 class="text-sm font-semibold text-stone-700 mb-4">İyzico Ayarları</h3>
+              <div class="space-y-3">
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">API Key</label>
+                  <input id="settings-iyzico-key" type="password" class="input-field w-full" placeholder="sandbox-..." />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">Secret Key</label>
+                  <input id="settings-iyzico-secret" type="password" class="input-field w-full" placeholder="..." />
+                </div>
+                <div class="flex items-center gap-2">
+                  <input type="checkbox" id="settings-iyzico-sandbox" class="h-4 w-4 rounded border-stone-300 text-brand-600" checked />
+                  <label for="settings-iyzico-sandbox" class="text-sm text-stone-700">Sandbox modu (test)</label>
+                </div>
+                <button onclick="saveSettings('iyzico')" class="btn-primary text-sm">Kaydet</button>
+              </div>
+            </div>
+            <div class="rounded-xl border border-stone-200 bg-white p-6">
+              <h3 class="text-sm font-semibold text-stone-700 mb-4">Site Ayarları</h3>
+              <div class="space-y-3">
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">Site Başlığı</label>
+                  <input id="settings-site-title" type="text" class="input-field w-full" value="bydesign.ai — AI Laboratuvarı" />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-xs font-medium text-stone-600">Duyuru Metni (opsiyonel)</label>
+                  <input id="settings-announcement" type="text" class="input-field w-full" placeholder="Ücretsiz beta erişimi!" />
+                </div>
+                <button onclick="saveSettings('site')" class="btn-primary text-sm">Kaydet</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="firebase-init.js"></script>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
