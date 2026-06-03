@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bydesign.ai — AI Laboratuvarı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['DM Sans', 'sans-serif'],
+            serif: ['DM Serif Display', 'serif'],
+          },
+          colors: {
+            brand: {
+              50:  '#f0f7ff',
+              100: '#e0effe',
+              200: '#bae0fd',
+              300: '#7dc8fb',
+              400: '#38aaf5',
+              500: '#0e8fe3',
+              600: '#0271c1',
+              700: '#035a9c',
+              800: '#074c80',
+              900: '#0c406b',
+            },
+            stone: {
+              50:  '#fafaf9',
+              100: '#f5f5f4',
+              200: '#e7e5e4',
+              300: '#d6d3d1',
+              400: '#a8a29e',
+              500: '#78716c',
+              600: '#57534e',
+              700: '#44403c',
+              800: '#292524',
+              900: '#1c1917',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-stone-50 font-sans text-stone-800 antialiased">
+
+  <!-- AUTH OVERLAY -->
+  <div id="auth-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-stone-50/95 backdrop-blur-sm">
+    <div class="w-full max-w-md px-6">
+      <!-- Logo -->
+      <div class="mb-10 text-center">
+        <span class="font-serif text-3xl text-stone-900">by<span class="text-brand-600">design</span></span>
+        <p class="mt-2 text-sm text-stone-500">AI Laboratuvarı — Beta</p>
+      </div>
+
+      <!-- Auth Card -->
+      <div class="rounded-2xl border border-stone-200 bg-white p-8 shadow-sm">
+        <!-- Tabs -->
+        <div class="mb-6 flex rounded-xl bg-stone-100 p-1">
+          <button onclick="switchAuthTab('login')" id="tab-login" class="auth-tab active flex-1 rounded-lg py-2 text-sm font-medium transition-all">Giriş Yap</button>
+          <button onclick="switchAuthTab('register')" id="tab-register" class="auth-tab flex-1 rounded-lg py-2 text-sm font-medium transition-all">Kayıt Ol</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="form-login">
+          <div class="space-y-4">
+            <div>
+              <label class="mb-1.5 block text-xs font-medium text-stone-600">E-posta</label>
+              <input id="login-email" type="email" placeholder="ad@email.com" class="input-field w-full" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-medium text-stone-600">Şifre</label>
+              <input id="login-password" type="password" placeholder="••••••••" class="input-field w-full" />
+            </div>
+            <div id="auth-error" class="hidden rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600"></div>
+            <button onclick="loginWithEmail()" class="btn-primary w-full">Giriş Yap</button>
+          </div>
+
+          <div class="my-5 flex items-center gap-3">
+            <div class="h-px flex-1 bg-stone-200"></div>
+            <span class="text-xs text-stone-400">veya</span>
+            <div class="h-px flex-1 bg-stone-200"></div>
+          </div>
+
+          <button onclick="loginWithGoogle()" class="btn-google w-full">
+            <svg class="h-4 w-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google ile Giriş Yap
+          </button>
+        </div>
+
+        <!-- Register Form -->
+        <div id="form-register" class="hidden">
+          <div class="space-y-4">
+            <div>
+              <label class="mb-1.5 block text-xs font-medium text-stone-600">Ad Soyad</label>
+              <input id="reg-name" type="text" placeholder="Adınız Soyadınız" class="input-field w-full" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-medium text-stone-600">E-posta</label>
+              <input id="reg-email" type="email" placeholder="ad@email.com" class="input-field w-full" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-medium text-stone-600">Şifre</label>
+              <input id="reg-password" type="password" placeholder="En az 6 karakter" class="input-field w-full" />
+            </div>
+            <div id="reg-error" class="hidden rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600"></div>
+            <button onclick="registerWithEmail()" class="btn-primary w-full">Hesap Oluştur</button>
+          </div>
+
+          <div class="my-5 flex items-center gap-3">
+            <div class="h-px flex-1 bg-stone-200"></div>
+            <span class="text-xs text-stone-400">veya</span>
+            <div class="h-px flex-1 bg-stone-200"></div>
+          </div>
+
+          <button onclick="loginWithGoogle()" class="btn-google w-full">
+            <svg class="h-4 w-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google ile Kayıt Ol
+          </button>
+        </div>
+      </div>
+      <p class="mt-4 text-center text-xs text-stone-400">Giriş yaparak <a href="#" class="underline">Kullanım Koşulları</a>'nı kabul etmiş olursunuz.</p>
+    </div>
+  </div>
+
+  <!-- MAIN APP (hidden until auth) -->
+  <div id="app" class="hidden min-h-screen">
+
+    <!-- TOP NAV -->
+    <header class="sticky top-0 z-40 border-b border-stone-200 bg-white/80 backdrop-blur-md">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
+        <a href="index.html" class="font-serif text-xl text-stone-900">by<span class="text-brand-600">design</span><span class="ml-2 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-600 uppercase tracking-wider">AI Lab</span></a>
+
+        <nav class="hidden items-center gap-1 md:flex">
+          <a href="index.html" class="nav-link active">Araçlar</a>
+          <a href="pricing.html" class="nav-link">Fiyatlar</a>
+          <a href="#" id="admin-nav-link" class="hidden nav-link text-brand-600">Admin Panel</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <div id="user-avatar" class="h-8 w-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 text-xs font-semibold"></div>
+            <span id="user-name-display" class="hidden text-sm font-medium text-stone-700 md:block"></span>
+          </div>
+          <button onclick="logout()" class="rounded-lg border border-stone-200 px-3 py-1.5 text-xs font-medium text-stone-600 hover:bg-stone-100 transition-colors">Çıkış</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="border-b border-stone-200 bg-white px-6 py-16 text-center">
+      <div class="mx-auto max-w-2xl">
+        <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-xs font-medium text-brand-700">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse"></span>
+          Gemini AI ile Çalışıyor
+        </div>
+        <h1 class="font-serif text-4xl leading-tight text-stone-900 md:text-5xl">Dijital işlerini <em>yapay zeka</em> ile hızlandır</h1>
+        <p class="mt-4 text-base text-stone-500">Ajanda planlama, not düzenleme ve içerik takvimi — hepsi tek platformda, Türkçe.</p>
+      </div>
+    </section>
+
+    <!-- PLAN BADGE -->
+    <div id="plan-badge-container" class="mx-auto max-w-7xl px-6 pt-6">
+      <div id="plan-badge" class="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-4 py-1.5 text-xs font-medium text-stone-600 shadow-sm">
+        <span id="plan-icon">⚡</span>
+        <span id="plan-name-display">Ücretsiz Plan</span>
+        <span class="text-stone-400">·</span>
+        <span id="plan-usage-display" class="text-stone-500">3 / 5 kullanım</span>
+        <a href="pricing.html" class="ml-1 text-brand-600 hover:underline">Yükselt →</a>
+      </div>
+    </div>
+
+    <!-- TOOLS GRID -->
+    <main class="mx-auto max-w-7xl px-6 py-10">
+      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+
+        <!-- Tool 1: Smart To-Do -->
+        <div class="tool-card">
+          <div class="tool-card-header">
+            <div class="tool-icon bg-blue-50 text-blue-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            </div>
+            <div>
+              <h2 class="text-base font-semibold text-stone-900">Akıllı Ajanda</h2>
+              <p class="text-xs text-stone-500">Günlük saatlik plan oluşturucu</p>
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="mb-1.5 block text-xs font-medium text-stone-600">Bugün yapman gerekenler</label>
+            <textarea id="todo-input" rows="4" placeholder="Örn: Müşteri toplantısı, proje teklifi yaz, sosyal medya paylaşımı, e-posta yanıtla, alışveriş..." class="input-field w-full resize-none text-sm"></textarea>
+            <button onclick="runTool('todo')" class="btn-tool mt-3 w-full">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Planla
+            </button>
+          </div>
+          <div id="todo-result" class="result-box hidden mt-4"></div>
+          <div id="todo-loading" class="loading-box hidden mt-4"></div>
+        </div>
+
+        <!-- Tool 2: AI Notes -->
+        <div class="tool-card">
+          <div class="tool-card-header">
+            <div class="tool-icon bg-amber-50 text-amber-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </div>
+            <div>
+              <h2 class="text-base font-semibold text-stone-900">AI Not Düzenleyici</h2>
+              <p class="text-xs text-stone-500">Karmaşık notları temizle ve özetle</p>
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="mb-1.5 block text-xs font-medium text-stone-600">Düzenlemek istediğin not</label>
+            <textarea id="notes-input" rows="4" placeholder="Toplantı notları, dağınık fikirler, karmaşık düşünceler... Hepsini buraya yapıştır." class="input-field w-full resize-none text-sm"></textarea>
+            <button onclick="runTool('notes')" class="btn-tool mt-3 w-full">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+              Notu Temizle
+            </button>
+          </div>
+          <div id="notes-result" class="result-box hidden mt-4"></div>
+          <div id="notes-loading" class="loading-box hidden mt-4"></div>
+        </div>
+
+        <!-- Tool 3: Content Calendar -->
+        <div class="tool-card md:col-span-2 xl:col-span-1">
+          <div class="tool-card-header">
+            <div class="tool-icon bg-emerald-50 text-emerald-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div>
+              <h2 class="text-base font-semibold text-stone-900">İçerik Takvimi</h2>
+              <p class="text-xs text-stone-500">Haftalık sosyal medya planı</p>
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="mb-1.5 block text-xs font-medium text-stone-600">Sektörün / Markan</label>
+            <textarea id="calendar-input" rows="4" placeholder="Örn: Butik kahve dükkanı, İstanbul / Moda ve tekstil markası / Dijital pazarlama ajansı..." class="input-field w-full resize-none text-sm"></textarea>
+            <button onclick="runTool('calendar')" class="btn-tool mt-3 w-full">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              Haftalık Plan Çıkar
+            </button>
+          </div>
+          <div id="calendar-result" class="result-box hidden mt-4"></div>
+          <div id="calendar-loading" class="loading-box hidden mt-4"></div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-stone-200 bg-white px-6 py-8 text-center text-xs text-stone-400">
+      <p>© 2025 bydesign.com.tr · AI Laboratuvarı · <a href="mailto:info@bydesign.com.tr" class="hover:text-stone-600">info@bydesign.com.tr</a></p>
+    </footer>
+
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script type="module" src="firebase-init.js"></script>
+  <!-- Markdown renderer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- App logic -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
