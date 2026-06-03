@@ -16,7 +16,7 @@ import {
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 // Replace with your actual Gemini API key (or load from Firestore settings)
-let GEMINI_API_KEY = "AQ.Ab8RN6LMd56ZVymtl8OLK3RRwfqY30DIH8eG0qdtkUVEvbz3jw";
+let GEMINI_API_KEY = "";
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 const ADMIN_EMAIL  = "bydesign@admin.com";
 
